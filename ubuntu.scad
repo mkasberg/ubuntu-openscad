@@ -1,7 +1,7 @@
 /* 
 The Ubuntu Logo!
 
-This is a literal interpretation based on the reference SVG. To translate color to 3D, we treat orange as having a height of 1, and treat white as having a height of 2.
+This is a literal interpretation based on the reference SVG.
 
 Reference SVG from Wikimedia Commons:
 https://commons.wikimedia.org/wiki/File:UbuntuCoF.svg
@@ -56,8 +56,12 @@ module ubuntu_friend_ring(size, thickness=1) {
   translate([50, 50, 0]) rotate(240) translate([-50, -50, 0]) friend_fill(thickness);
 }
 
-module ubuntu_logo_empty(size, thickness=1) {
-  scale([size/100, size/100, 1]) {
+module ubuntu_logo_empty(size, thickness=1, margin=false) {
+  // The reference SVG has a margin of 5 on all sides (on a width of 100).
+  // Remove that by default.
+  diameter = margin ? size : size * 10/9;
+  translation = margin ? [0, 0, 0] : [-.05 * size, -.05 * size, 0];
+  translate(translation) scale([diameter/100, diameter/100, 1]) {
     difference() {
       // <circle fill="#f47421" cy="50" cx="50" r="45"/>
       linear_extrude(thickness) translate([50, 50, 0]) circle(r=45);
@@ -67,6 +71,4 @@ module ubuntu_logo_empty(size, thickness=1) {
   }
 }
 
-!ubuntu_logo_empty(100);
-
-
+ubuntu_logo_empty(100);

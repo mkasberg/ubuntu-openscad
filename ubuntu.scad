@@ -21,44 +21,52 @@ Your use of Canonical IP is subject to:
 
 
 // <g id="friend">
-module friend_white() {
+module friend_fill(thickness=1) {
   // <circle fill="#ffffff" cx="19.4" cy="50" r="6.00745"/>
-  linear_extrude(2) translate([19.4, 50, 0]) circle(r=6.00745);
+  linear_extrude(thickness) translate([19.4, 50, 0]) circle(r=6.00745);
 }
 
 // <g id="friend">
-module friend_orange() {
+module friend_empty(thickness=1) {
   // <circle fill="#f47421" cx="19.4" cy="50" r="8.4376"/>
-  translate([0, 0, 1 - 0.001]) linear_extrude(1.002) translate([19.4, 50, 0]) circle(r=8.4376);
+  translate([0, 0, -0.001]) linear_extrude(thickness + 0.002) translate([19.4, 50, 0]) circle(r=8.4376);
   // <path stroke="#f47421" stroke-width="3.2378" d="M67,50H77"/>
-  translate([0, 0, 1 - 0.001]) linear_extrude(1.002) translate([67, 50, 0]) square([77, 3.2378]);
+  translate([0, 0, -0.001]) linear_extrude(thickness + 0.002) translate([67, 50, 0]) square([77, 3.2378]);
 }
 
-module ubuntu(size, height=2) {
-  scale([size/100, size/100, height/2]) {
-    difference() {
-      union() {
-        // <circle fill="#f47421" cy="50" cx="50" r="45"/>
-        linear_extrude(1) translate([50, 50, 0]) circle(r=45);
-
-        // <circle fill="none" stroke="#ffffff" stroke-width="8.55" cx="50" cy="50" r="21.825"/>
-        linear_extrude(2) {
-          translate([50, 50, 0]) difference() {
-            circle(r=21.825 + 8.55/2);
-            circle(r=21.825 - 8.55/2);
-          }
+module ubuntu_friend_ring(size, thickness=1) {
+  difference() {
+    union() {
+      // <circle fill="none" stroke="#ffffff" stroke-width="8.55" cx="50" cy="50" r="21.825"/>
+      linear_extrude(thickness) {
+        translate([50, 50, 0]) difference() {
+          circle(r=21.825 + 8.55/2);
+          circle(r=21.825 - 8.55/2);
         }
       }
-
-      friend_orange();
-      translate([50, 50, 0]) rotate(120) translate([-50, -50, 0]) friend_orange();
-      translate([50, 50, 0]) rotate(240) translate([-50, -50, 0]) friend_orange();
     }
 
-    friend_white();
-    translate([50, 50, 0]) rotate(120) translate([-50, -50, 0]) friend_white();
-    translate([50, 50, 0]) rotate(240) translate([-50, -50, 0]) friend_white();
+    friend_empty();
+      translate([50, 50, 0]) rotate(120) translate([-50, -50, 0]) friend_empty();
+      translate([50, 50, 0]) rotate(240) translate([-50, -50, 0]) friend_empty();
+  }
+  
+  friend_fill(thickness);
+  translate([50, 50, 0]) rotate(120) translate([-50, -50, 0]) friend_fill(thickness);
+  translate([50, 50, 0]) rotate(240) translate([-50, -50, 0]) friend_fill(thickness);
+}
+
+module ubuntu_logo_empty(size, thickness=1) {
+  scale([size/100, size/100, 1]) {
+    difference() {
+      // <circle fill="#f47421" cy="50" cx="50" r="45"/>
+      linear_extrude(thickness) translate([50, 50, 0]) circle(r=45);
+      
+      translate([0, 0, -0.001]) ubuntu_friend_ring(size, thickness=1.002);
+    }
   }
 }
 
-ubuntu(100);
+!ubuntu_logo_empty(100);
+
+
